@@ -59,9 +59,9 @@ fn game_loop(mut board_state: [States;9]){
             }
 
             //get input from player
-            input = get_human_input(board_state);
+            input = rand::thread_rng().gen_range(0, current_possible_moves.len());
 
-            if input != 0 {
+            if input != 0 && current_possible_moves.contains(&input) {
                 board_state[input - 1] = States::Circle;
             }
 
@@ -116,9 +116,11 @@ fn evaluate_board_state(board_state:[States;9]) -> i8{
     for i in 0..3 {
 
         if board_state[i] == board_state[i + 3] &&  board_state[i] == board_state[(i + 6)] && board_state[i] != States::Empty{
-            return if board_state[i * 3] == States::Cross {
+            return if board_state[i] == States::Cross {
+                //println!("**Debug Message**: For the Board {:?} there is a win in a column. The evaluation is 1", board_state);
                 1
             } else {
+                //println!("**Debug Message**: For the Board {:?} there is a win in a column. The evaluation is -1", board_state);
                 -1
             }
         }
@@ -128,10 +130,12 @@ fn evaluate_board_state(board_state:[States;9]) -> i8{
     //CHECK FOR ROWS
     for i in 0..3 {
 
-        if board_state[i*3] == board_state[i*3 + 1] &&  board_state[i*3] == board_state[i*3 + 2] && board_state[i*3] != States::Empty{
+        if board_state[i * 3] == board_state[i*3 + 1] &&  board_state[i*3] == board_state[i*3 + 2] && board_state[i*3] != States::Empty{
             return if board_state[i * 3] == States::Cross {
+                //println!("**Debug Message**: For the Board {:?} there is a win in a row. The evaluation is 1", board_state);
                 1
             } else {
+                //println!("**Debug Message**: For the Board {:?} there is a win in a row. The evaluation is -1", board_state);
                 -1
             }
         }
@@ -141,20 +145,24 @@ fn evaluate_board_state(board_state:[States;9]) -> i8{
     //CHECK FOR DIAGONALS
     if board_state[0] == board_state[4] &&  board_state[0] == board_state[8] && board_state[0] != States::Empty{
         return if board_state[0] == States::Cross {
+            //println!("**Debug Message**: For the Board {:?} there is a win in a diagonal. The evaluation is 1", board_state);
             1
         } else {
+            //println!("**Debug Message**: For the Board {:?} there is a win in a diagonal. The evaluation is -1", board_state);
             -1
         }
     }
     if board_state[2] == board_state[4] &&  board_state[2] == board_state[6] && board_state[2] != States::Empty{
         return if board_state[2] == States::Cross {
+            //println!("**Debug Message**: For the Board {:?} there is a win in a diagonal. The evaluation is 1", board_state);
             1
         } else {
+            //println!("**Debug Message**: For the Board {:?} there is a win in a diagonal. The evaluation is -1", board_state);
             -1
         }
     }
 
-
+    //println!("**Debug Message**: For the Board {:?} there is no win. The evaluation is 0", board_state);
     return 0;
 }
 
@@ -256,7 +264,7 @@ fn minimax(mut board_state: [States;9], depth: i8, is_maximizing_player: bool) -
 
     //minimizer won
     if score == -1 {
-        return score;
+        return score
     }
 
     //if nobody has won and there are no more moves available, it is a tie
